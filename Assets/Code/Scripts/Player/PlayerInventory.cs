@@ -9,41 +9,41 @@ using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviour {
 
-    public bool canPickUp;                                          // Enable/disable pickup ability
-    public bool changedSlot;
-    public bool canScroll;
+    [SerializeField] private bool canPickUp;                                            // Enable/disable pickup ability
+    private bool changedSlot;
+    [SerializeField] private bool canScroll;
 
     [Header("Inventory")]
-    public List<GameObject> inventory = new List<GameObject>();     // Inventory
-    public List<RawImage> hotbarSelector = new List<RawImage>();    // Select what item is being held
-    public List<RawImage> itemImages = new List<RawImage>();        // Icons for images
-    public Transform hand;
+    public List<GameObject> inventory = new List<GameObject>();                         // Inventory
+    [HideInInspector] private List<RawImage> hotbarSelector = new List<RawImage>();     // Select what item is being held
+    [HideInInspector] public List<RawImage> itemImages = new List<RawImage>();          // Icons for images
+    [SerializeField] private Transform hand;
     public ItemChunk itemChunk;
 
     [Header("Colours")]
-    public Color selected;                                          // Colour of selected inventory slot
-    public Color unselected;                                        // Colour of unselected inventory slot
+    [SerializeField] private Color selected;                                            // Colour of selected inventory slot
+    [SerializeField] private Color unselected;                                          // Colour of unselected inventory slot
 
     [Header("Current Item")]
-    public GameObject currentItem;                                  // Item currently held
-    public Rigidbody currentItemBody;                               // Item body currently held
-    public int currentSlot;                                         // The slot the current item is in
+    [SerializeField] private GameObject currentItem;                                    // Item currently held
+    [SerializeField] private Rigidbody currentItemBody;                                 // Item body currently held
+    [SerializeField] private int currentSlot;                                           // The slot the current item is in
 
     [Header("Previous Item")]
-    public GameObject previousItem;                                 // Previous item
-    public int previousSlot;                                        // Previous item's slot
+    [SerializeField] private GameObject previousItem;                                   // Previous item
+    [SerializeField] private int previousSlot;                                          // Previous item's slot
 
     [Header("Pick up item")]
-    public bool holdingItem;                                        // Check if player is holding an item
-    public float pickUpRange;
-    public LayerMask pickUpLayer;                                   // Filter what objects can be picked up
+    [SerializeField] private bool holdingItem;                                          // Check if player is holding an item
+    [SerializeField] private float pickUpRange;
+    [SerializeField] private LayerMask pickUpLayer;                                     // Filter what objects can be picked up
 
-    public GameObject pickUpHint;                                   // Notify the player they can pick up the object they're looking at
-    public Animation inventoryFull;                                 // Notify the player when their inventory is full
+    [SerializeField] private GameObject pickUpHint;                                     // Notify the player they can pick up the object they're looking at
+    [SerializeField] private Animation inventoryFull;                                   // Notify the player when their inventory is full
 
     [Header("Drop item")]
-    public Vector3 dropRange;                                       // Drop location
-    public Transform pickUpObjectList;                              // Parent of the items the player can pick up
+    [SerializeField] private Vector3 dropPos;                                           // Drop location
+    [SerializeField] private Transform pickUpObjectList;                                // Parent of the items the player can pick up
 
     private void FixedUpdate() {
         for (int i = 0; i < inventory.Count; i++) {
@@ -52,20 +52,19 @@ public class PlayerInventory : MonoBehaviour {
     }
 
     private void Update() {
-        PickUpRay();                                                // Pick up raycast
+        PickUpRay();                                                                    // Pick up raycast
+        Scrolling();                                                                    // See if player is scrolling through inventory
 
-        Scrolling();                                                // See if player is scrolling through inventory
-
-        if (Input.GetKeyDown(KeyCode.Q)) {                          // Drop if Q is pressed
+        if (Input.GetKeyDown(KeyCode.Q)) {                                              // Drop if Q is pressed
             Drop();                                                 
         }
 
         if (changedSlot) {
-            ChangeSlot();                                           // Change slot
+            ChangeSlot();                                                               // Change slot
         }
     }
 
-    private void PickUpRay() {                                      // Shoot out a ray infront of player to detetect any objects
+    private void PickUpRay() {                                                          // Shoot out a ray infront of player to detetect any objects
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, pickUpRange, pickUpLayer)) {
             pickUpHint.SetActive(true);
@@ -121,7 +120,7 @@ public class PlayerInventory : MonoBehaviour {
 
     private void Drop() {
         if (holdingItem) {
-            currentItem.transform.localPosition = dropRange;                                        // Set object position to drop position
+            currentItem.transform.localPosition = dropPos;                                          // Set object position to drop position
             currentItem.transform.localRotation = Quaternion.Euler(0f, 090f, 0f);                   // Reset rotation
             itemChunk = currentItem.GetComponent<ItemChunk>();
             currentItem.transform.SetParent(itemChunk.parentChunk);                                      // Put object back into Objects list
@@ -157,23 +156,23 @@ public class PlayerInventory : MonoBehaviour {
 
     private void Scrolling() {
         if (canScroll) {
-            if (Input.GetAxis("Mouse ScrollWheel") > 0f) {                                              // Scroll down
+            if (Input.GetAxis("Mouse ScrollWheel") > 0f) {                                          // Scroll down
                 if (currentSlot > 0) {
                     previousSlot = currentSlot;
                     previousItem = currentItem;
 
-                    currentSlot -= 1;                                                                   // Change current slot to previous slot
+                    currentSlot -= 1;                                                               // Change current slot to previous slot
                     changedSlot = true;
                 } else if (currentSlot == 0 && inventory.Count == 1) {
                     changedSlot = true;
                 }
 
-            } else if (Input.GetAxis("Mouse ScrollWheel") < 0f) {                                       // Scroll up
+            } else if (Input.GetAxis("Mouse ScrollWheel") < 0f) {                                   // Scroll up
                 if (currentSlot < inventory.Count - 1) {
                     previousSlot = currentSlot;
                     previousItem = currentItem;
 
-                    currentSlot += 1;                                                                   // Change current slot to next slot
+                    currentSlot += 1;                                                               // Change current slot to next slot
                     changedSlot = true;
                 } else if (currentSlot == inventory.Count - 1 && inventory.Count == 1) {
                     changedSlot = true;
@@ -181,7 +180,7 @@ public class PlayerInventory : MonoBehaviour {
             }
 
             hotbarSelector[previousSlot].color = unselected;
-            hotbarSelector[currentSlot].color = selected;                                               // Indicate what slot is selected
+            hotbarSelector[currentSlot].color = selected;                                           // Indicate what slot is selected
         }
     }
 

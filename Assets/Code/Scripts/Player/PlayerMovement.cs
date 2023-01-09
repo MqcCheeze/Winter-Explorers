@@ -3,62 +3,58 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
-    [Header("Player")]                              // Player
-    public CharacterController playerController;    // Player controller
-    public Transform playerBody;                    // Player body
-    public Transform playerModel;                   // Player model
-    public Transform playerCamera;                  // Player camera
-    public Transform playerHand;                    // Player hand
+    [Header("Player")]                                                  // Player
+    [SerializeField] private CharacterController playerController;      // Player controller
+    [SerializeField] private Transform playerBody;                      // Player body
+    [SerializeField] private Transform playerModel;                     // Player model
+    [SerializeField] private Transform playerCamera;                    // Player camera
+    [SerializeField] private Transform playerHand;                      // Player hand
 
 
-    [Header("Player Abilities")]                    // Player abilities
-    public bool canMove;                            // Enable/disable move ability
-    public bool canJump;                            // Enable/disable jump ability
-    public bool canSprint;                          // Enable/disable sprint ability
-    public bool canSneak;                           // Enable/disable sneak ability
-    public bool cannotUnsneak;                      // Enable/disable unsneak ability
+    [Header("Player Abilities")]                                        // Player abilities
+    [SerializeField] private bool canMove;                              // Enable/disable move ability
+    [SerializeField] private bool canJump;                              // Enable/disable jump ability
+    [SerializeField] private bool canSprint;                            // Enable/disable sprint ability
+    [SerializeField] private bool canSneak;                             // Enable/disable sneak ability
+    [SerializeField] private bool cannotUnsneak;                        // Enable/disable unsneak ability
 
-    [Header("Player Speed")]                        // Player movement
-    public float speed;                             // Speed
-    public float sneakSpeed;                        // Sneaking speed
-    public float walkSpeed;                         // Walking speed
-    public float sprintSpeed;                       // Running speed
+    [Header("Player Speed")]                                            // Player movement
+    [SerializeField] private float speed;                               // Speed
+    [SerializeField] private float sneakSpeed;                          // Sneaking speed
+    [SerializeField] private float walkSpeed;                           // Walking speed
+    [SerializeField] private float sprintSpeed;                         // Running speed
 
-    public float sneakFOV;
-    public float walkFOV;
-    public float sprintFOV;
+    [SerializeField] private float gravity;                             // Player's gravity
+    [SerializeField] private float jumpHeight;                          // Player's jump height
 
-    public float gravity;                           // Player's gravity
-    public float jumpHeight;                        // Player's jump height
+    [Header("Movement")]                                                // Movement
+    [SerializeField] private Vector3 velocity;                          // Player velocity
+    private Vector3 move;
+    private float x;                                                    // Left and right
+    private float z;                                                    // Forwards and backwards
 
-    [Header("Movement")]                            // Movement
-    public Vector3 velocity;                        // Player velocity
-    public Vector3 move;
-    public float x;                                 // Left and right
-    public float z;                                 // Forwards and backwards
+    [Header("Grounded")]                                                // Is player on the ground?
+    [SerializeField] private Transform groundCheck;                     // Object to check ground with
 
-    [Header("Grounded")]                            // Is player on the ground?
-    public Transform groundCheck;                   // Object to check ground with
+    [SerializeField] private float groundDistance;                      // Ground distance
+    [SerializeField] private LayerMask groundMask;                      // Ground layer
+    [SerializeField] private bool grounded;                             // True/false is player touching ground
 
-    public float groundDistance;                    // Ground distance
-    public LayerMask groundMask;                    // Ground layer
-    public bool grounded;                           // True/false is player touching ground
+    [Header("Sprint")]                                                  // Sprint
+    public bool isSprinting;                                            // If the player is sprinting
 
-    [Header("Sprint")]                              // Sprint
-    public bool isSprinting;                        // If the player is sprinting
+    [Header("Sneak")]                                                   // Sneak
+    public bool isSneaking;                                             // If the player is sneaking
 
-    [Header("Sneak")]                               // Sneak
-    public bool isSneaking;                         // If the player is sneaking
-
-    public Transform ceilingCheck;                  // Check if the player has enough room to unsneak
-    public float ceilingDistance;                   // Check the distance
-    public LayerMask ceilingMask;                   // Check the objects it should be looking for
+    [SerializeField] private Transform ceilingCheck;                    // Check if the player has enough room to unsneak
+    [SerializeField] private float ceilingDistance;                     // Check the distance
+    [SerializeField] private LayerMask ceilingMask;                     // Check the objects it should be looking for
 
     void Start() {
-        canMove = true;                             // Allow player to move
-        canJump = true;                             // Allow player to jump
-        canSprint = true;                           // Allow player to sprint
-        canSneak = true;                            // Allow player to sneak
+        canMove = true;                                                 // Allow player to move
+        canJump = true;                                                 // Allow player to jump
+        canSprint = true;                                               // Allow player to sprint
+        canSneak = true;                                                // Allow player to sneak
     }
     void Update() {
 
@@ -115,7 +111,7 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    public void Sneak() {                                                                  // Sneak
+    public void Sneak() {                                                                   // Sneak
         if (canSneak) {
             if (!isSneaking) {
                 StartSneak();
@@ -125,7 +121,7 @@ public class PlayerMovement : MonoBehaviour {
         }
     }
 
-    public void StartSneak() {                                                             // Start sneaking
+    public void StartSneak() {                                                              // Start sneaking
         isSneaking = true;
         canJump = false;                                                                    // Disable jump ability
         canSprint = false;                                                                  // Disable sprint ability
@@ -138,7 +134,7 @@ public class PlayerMovement : MonoBehaviour {
         ceilingCheck.localPosition = new Vector3(0f, ceilingCheck.localPosition.y - 0.5f, 0f);
     }
 
-    public void UnSneak() {                                                                // Stop sneaking
+    public void UnSneak() {                                                                 // Stop sneaking
         isSneaking = false;
         canJump = true;                                                                     // Enable jump ability
         canSprint = true;                                                                   // Enable sprint ability

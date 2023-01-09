@@ -9,15 +9,14 @@ using UnityEngine.UI;
 
 public class Options : MonoBehaviour
 {
-    public OptionsData optionsData = new OptionsData();
+    public OptionsData optionsData = new OptionsData();                                     // Call options data struct
 
-    public Animation pauseAnim;
+    [Header("Animations")]                                                                  // Animations
+    [SerializeField] private Animation pauseAnim;                                           // pause menu animation
 
     [Header("Panels")]                                                                      // Panels
-    public GameObject menu;                                                                 // Main menu panel
-    public GameObject pause;                                                                // Pause menu panel
-    public GameObject settings;                                                             // Settings menu panel
-
+    [SerializeField] private GameObject pause;                                              // Pause menu panel
+    [SerializeField] private GameObject settings;                                           // Settings menu panel
     
     [Header("Settings")]                                                                    // Settings UI
     public Slider brightness;                                                               // Brightness setting slider
@@ -29,16 +28,15 @@ public class Options : MonoBehaviour
     public Slider volume;                                                                   // Volume setting slider
 
     [Header("Global Volume")]
-    public Volume globalVolume;
+    [SerializeField] private Volume globalVolume;
 
     [Header("Camera")]
-    public UniversalAdditionalCameraData mainCamera;
+    [SerializeField] private UniversalAdditionalCameraData mainCamera;
 
     [Header("Brightness")]
-    public Image brightnessOverlay;
+    [SerializeField] private Image brightnessOverlay;
   
     public void SaveSettings() {                                                            // Set changed values to universal settings
-
         optionsData.brightnessValueSetting = brightness.value;
         optionsData.gammaValueSetting = gamma.value;
         optionsData.contrastValueSetting = contrast.value;
@@ -52,64 +50,49 @@ public class Options : MonoBehaviour
         overlayAmount.a = brightness.value;
         brightnessOverlay.color = overlayAmount;
 
-        
-        LiftGammaGain gammaSetting;                                                         // Gamma
-        globalVolume.profile.TryGet<LiftGammaGain>(out gammaSetting);
+        LiftGammaGain gammaSetting;
+        globalVolume.profile.TryGet<LiftGammaGain>(out gammaSetting);                       // Gamma
         gammaSetting.gamma.value = new Vector4(1f, 1f, 1f, gamma.value);
 
-        
-        ColorAdjustments contrastSetting;                                                   // Contrast
-        globalVolume.profile.TryGet<ColorAdjustments>(out contrastSetting);
+        ColorAdjustments contrastSetting;
+        globalVolume.profile.TryGet<ColorAdjustments>(out contrastSetting);                 // Contrast
         contrastSetting.contrast.value = contrast.value;
 
-        
-        Vignette vignetteSetting;                                                           // Vignette
-        globalVolume.profile.TryGet<Vignette>(out vignetteSetting);
+        Vignette vignetteSetting;
+        globalVolume.profile.TryGet<Vignette>(out vignetteSetting);                         // Vignette
         vignetteSetting.active = vignette.isOn;
 
-        
-        Bloom bloomSetting;                                                                 // Bloom
-        globalVolume.profile.TryGet<Bloom>(out bloomSetting);
+        Bloom bloomSetting;
+        globalVolume.profile.TryGet<Bloom>(out bloomSetting);                               // Bloom
         bloomSetting.active = bloom.isOn;
 
-        
-        if (antiAliasing.isOn) {                                                            // Anti-aliasing
-            mainCamera.antialiasing = AntialiasingMode.FastApproximateAntialiasing;         // Turn anti-aliasing on
-        } else if (!antiAliasing.isOn) {
-            mainCamera.antialiasing = AntialiasingMode.None;                                // Turn anti-aliasing off
+        switch (antiAliasing.isOn) {                                                        // Anti aliasing
+            case true:
+                mainCamera.antialiasing = AntialiasingMode.FastApproximateAntialiasing;     // Turn anti-aliasing on
+                break;
+            case false:
+                mainCamera.antialiasing = AntialiasingMode.None;                            // Turn anti-aliasing off
+                break;
         }
-
-        
         AudioListener.volume = volume.value;                                                // Volume
 
-                    // -- GO BACK TO MENU --
-        if (SceneManager.GetActiveScene().name == "MainMenu") {                             // If in title screen
-            menu.SetActive(true);
-        } else if (SceneManager.GetActiveScene().name == "Game") {                          // If in-game
-            Buttons.isInSettings = false;
-            settings.SetActive(false);                      // Close settings menu panel
-            pause.SetActive(true);                          // Open pause menu
-            pauseAnim.Play("Load");                         // Play menu deload animation
-            //StartCoroutine(PauseGameAnimation());
-           
-        }                                                     
-    }
-
-    public void RevertOptions() {                                                           // Revert settings
-        brightness.value = optionsData.brightnessValueSetting;
-        gamma.value = optionsData.gammaValueSetting;
-        contrast.value = optionsData.contrastValueSetting;
-        vignette.isOn = optionsData.vignetteValueSetting;
-        bloom.isOn = optionsData.bloomValueSetting;
-        antiAliasing.isOn = optionsData.antiAliasingValueSetting;
-        volume.value = optionsData.volumeValueSetting;
+        StartCoroutine(PauseGameAnimation());                                               // Go back to paused menu                                     
     }
 
     private IEnumerator PauseGameAnimation() {
-        settings.SetActive(false);                      // Close settings menu panel
-        pause.SetActive(true);                          // Open pause menu
-        pauseAnim.Play("Load");                         // Play menu deload animation
+        settings.SetActive(false);                                                          // Close settings menu panel
+        pauseAnim.Play("Load");                                                             // Play menu deload animation
         yield return new WaitForSeconds(0.25f);
-        
+        PauseMenu.pauseState = PauseMenu.PauseState.Paused;                                 // Set state to in pause menu
+    }
+
+    public void ResetOptions() {                                                            // Reset settings
+        brightness.value = 0f;
+        gamma.value = 0.3f;
+        contrast.value = 35f;
+        vignette.isOn = true;
+        bloom.isOn = false;
+        antiAliasing.isOn = false;
+        volume.value = 0.5f;
     }
 }

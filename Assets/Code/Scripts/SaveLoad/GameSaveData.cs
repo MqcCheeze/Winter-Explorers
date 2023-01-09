@@ -12,127 +12,116 @@ public class GameSaveData : MonoBehaviour
 {
                 // -- PLAYER --
     [Header("Player")]
-    private Transform playerTransform;                                                      // Player transform
-    private CharacterController charController;                                             // CharacterController component
-    private PlayerMovement playerMovement;                                                  // Player movement class
-    private PlayerInventory playerInventory;
+    private Transform playerTransform;                                                          // Player transform
+    private CharacterController charController;                                                 // CharacterController component
+    private PlayerMovement playerMovement;                                                      // Player movement class
+    //private PlayerInventory playerInventory;
 
-    PlayerData playerData = new PlayerData();                                               // Call struct
-    OptionsData optionsData = new OptionsData();                                            // Call struct
-    WorldData worldData = new WorldData();                                                  // Call struct
+    PlayerData playerData = new PlayerData();                                                   // Call struct
+    OptionsData optionsData = new OptionsData();                                                // Call struct
+    WorldData worldData = new WorldData();                                                      // Call struct
                 
                 // -- OPTIONS --
-    [Header("Settings")]                                                                    // Settings UI
-    [SerializeField] private Slider brightness;                                             // Brightness setting slider
-    [SerializeField] private Slider gamma;                                                  // Gamma setting slider
-    [SerializeField] private Slider contrast;                                               // Contrast setting slider
-    [SerializeField] private Toggle vignette;                                               // Enable/disable vignette
-    [SerializeField] private Toggle bloom;                                                  // Enable/disable bloom
-    [SerializeField] private Toggle antiAliasing;                                           // Enable/disable anti-aliasing
-    [SerializeField] private Slider volume;                                                 // Volume setting slider
+    [Header("Settings")]                                                                        // Settings UI
+    [SerializeField] private Slider brightness;                                                 // Brightness setting slider
+    [SerializeField] private Slider gamma;                                                      // Gamma setting slider
+    [SerializeField] private Slider contrast;                                                   // Contrast setting slider
+    [SerializeField] private Toggle vignette;                                                   // Enable/disable vignette
+    [SerializeField] private Toggle bloom;                                                      // Enable/disable bloom
+    [SerializeField] private Toggle antiAliasing;                                               // Enable/disable anti-aliasing
+    [SerializeField] private Slider volume;                                                     // Volume setting slider
 
-    [Header("Global Volume")]                                                               // Settings
+    [Header("Global Volume")]                                                                   // Settings
     public Volume globalVolume;
 
-    [Header("Camera")]                                                                      // Settings
+    [Header("Camera")]                                                                          // Settings
     public UniversalAdditionalCameraData mainCamera;
 
-    [Header("Brightness")]                                                                  // Settings
+    [Header("Brightness")]                                                                      // Settings
     public Image brightnessOverlay;
 
 
-    public Options options;                                                                 // Set settings sliders/toggles
+    public Options options;                                                                     // Set settings sliders/toggles
 
     public static bool isNewSeed;
     public static int seed;
 
     private void Awake() {
-        playerTransform = GetComponent<Transform>();                                        // Player transform
-        charController = GetComponent<CharacterController>();                               // Enable/disable characater controller while loading game
-        playerMovement = GetComponent<PlayerMovement>();                                    // Save and load abilities
-        playerInventory = GetComponent<PlayerInventory>();
-        LoadWorldSettings();                                                                // Load the world data
-        StartCoroutine(LoadTheGame());                                                      // Load all other saved data
+        playerTransform = GetComponent<Transform>();                                            // Player transform
+        charController = GetComponent<CharacterController>();                                   // Enable/disable characater controller while loading game
+        playerMovement = GetComponent<PlayerMovement>();                                        // Save and load abilities
+        //playerInventory = GetComponent<PlayerInventory>();
+        LoadWorldSettings();                                                                    // Load the world data
+        StartCoroutine(LoadTheGame());                                                          // Load all other saved data
     }
 
                 // -- SAVING AND GOING TO MENU --
     public void SaveTheGame() {
                     // -- PLAYER --
-        playerData.playerPosition = playerTransform.position;                               // Saving position
-        playerData.playerRotation = playerTransform.rotation;                               // Saving rotation
-        playerData.sneaking = playerMovement.isSneaking;                                    // Saving sneak
+        playerData.playerPosition = playerTransform.position;                                   // Saving position
+        playerData.playerRotation = playerTransform.rotation;                                   // Saving rotation
+        playerData.sneaking = playerMovement.isSneaking;                                        // Saving sneak
 
-                    // -- OPTIONS --
-        optionsData.brightnessValueSetting = options.brightness.value;                      // Set the option slider and toggle values
-        optionsData.gammaValueSetting = options.gamma.value;
-        optionsData.contrastValueSetting = options.contrast.value;
-        optionsData.vignetteValueSetting = options.vignette.isOn;
-        optionsData.bloomValueSetting = options.bloom.isOn;
-        optionsData.antiAliasingValueSetting = options.antiAliasing.isOn;
-        optionsData.volumeValueSetting = options.volume.value;
+        optionsData = options.optionsData;                                                      // Save all options to the options data struct
 
                     // -- WORLD --
         worldData.seed = NoiseSettings.seed;
         worldData.offset = NoiseSettings.offset;
 
-        SaveGameManager.currentSaveData.playerData = playerData;                            // Set the player save data to variable
-        SaveGameManager.currentSaveData.optionsData = optionsData;                          // Set the options save data to variable
-        SaveGameManager.currentSaveData.worldData = worldData;                              // Set the world save data to variable
+        SaveGameManager.currentSaveData.playerData = playerData;                                // Set the player save data to variable
+        SaveGameManager.currentSaveData.optionsData = optionsData;                              // Set the options save data to variable
+        SaveGameManager.currentSaveData.worldData = worldData;                                  // Set the world save data to variable
 
-        SaveGameManager.Save();                                                             // Save values
+        SaveGameManager.Save();                                                                 // Save values
         StartCoroutine(LoadMenu());
     }
     public IEnumerator LoadMenu() {
         
         yield return new WaitForSeconds(0.1f);
-        SceneManager.LoadScene("MainMenu");                                                 // Load main menu scene
+        SceneManager.LoadScene("MainMenu");                                                     // Load main menu scene
     }
 
                 // -- LOAD AND START GAME --
-    public void LoadSettings() {                                                            // Load settings
+    public void LoadSettings() {                                                                // Load settings
 
                     // -- SET SETTING MENU VALUES --
-        brightness.value = optionsData.brightnessValueSetting;                              // Set setting panel brightness
-        gamma.value = optionsData.gammaValueSetting;                                        // Set setting panel gamma
-        contrast.value = optionsData.contrastValueSetting;                                  // Set setting panel ontrast
-        vignette.isOn = optionsData.vignetteValueSetting;                                   // Set setting panel vignette
-        bloom.isOn = optionsData.bloomValueSetting;                                         // Set setting panel bloom
-        antiAliasing.isOn = optionsData.antiAliasingValueSetting;                           // Set setting panel anti-aliasing
-        volume.value = optionsData.volumeValueSetting;                                      // Set setting panel volume
+        brightness.value = optionsData.brightnessValueSetting;                                  // Set setting panel brightness
+        gamma.value = optionsData.gammaValueSetting;                                            // Set setting panel gamma
+        contrast.value = optionsData.contrastValueSetting;                                      // Set setting panel ontrast
+        vignette.isOn = optionsData.vignetteValueSetting;                                       // Set setting panel vignette
+        bloom.isOn = optionsData.bloomValueSetting;                                             // Set setting panel bloom
+        antiAliasing.isOn = optionsData.antiAliasingValueSetting;                               // Set setting panel anti-aliasing
+        volume.value = optionsData.volumeValueSetting;                                          // Set setting panel volume
 
                     // -- SET SETTINGS --
-        Color overlayAmount = brightnessOverlay.color;                                      // Brightness
+        Color overlayAmount = brightnessOverlay.color;                                          // Brightness
         overlayAmount.a = brightness.value;
         brightnessOverlay.color = overlayAmount;
 
-
-        LiftGammaGain gammaSetting;                                                         // Gamma
-        globalVolume.profile.TryGet<LiftGammaGain>(out gammaSetting);
+        LiftGammaGain gammaSetting;
+        globalVolume.profile.TryGet<LiftGammaGain>(out gammaSetting);                           // Gamma
         gammaSetting.gamma.value = new Vector4(1f, 1f, 1f, gamma.value);
 
-
-        ColorAdjustments contrastSetting;                                                   // Contrast
-        globalVolume.profile.TryGet<ColorAdjustments>(out contrastSetting);
+        ColorAdjustments contrastSetting;
+        globalVolume.profile.TryGet<ColorAdjustments>(out contrastSetting);                     // Contrast
         contrastSetting.contrast.value = contrast.value;
 
-
-        Vignette vignetteSetting;                                                           // Vignette
-        globalVolume.profile.TryGet<Vignette>(out vignetteSetting);
+        Vignette vignetteSetting;
+        globalVolume.profile.TryGet<Vignette>(out vignetteSetting);                             // Vignette
         vignetteSetting.active = vignette.isOn;
 
-
-        Bloom bloomSetting;                                                                 // Bloom
-        globalVolume.profile.TryGet<Bloom>(out bloomSetting);
+        Bloom bloomSetting;
+        globalVolume.profile.TryGet<Bloom>(out bloomSetting);                                   // Bloom
         bloomSetting.active = bloom.isOn;
 
 
-        if (antiAliasing.isOn) {                                                            // Anti-aliasing
-            mainCamera.antialiasing = AntialiasingMode.FastApproximateAntialiasing;         // Turn anti-aliasing on
+        if (antiAliasing.isOn) {                                                                // Anti-aliasing
+            mainCamera.antialiasing = AntialiasingMode.FastApproximateAntialiasing;             // Turn anti-aliasing on
         } else if (!antiAliasing.isOn) {
-            mainCamera.antialiasing = AntialiasingMode.None;                                // Turn anti-aliasing off
+            mainCamera.antialiasing = AntialiasingMode.None;                                    // Turn anti-aliasing off
         }
 
-        AudioListener.volume = optionsData.volumeValueSetting;                              // Volume
+        AudioListener.volume = optionsData.volumeValueSetting;                                  // Volume
     }
 
     public void LoadWorldSettings() {
@@ -153,43 +142,41 @@ public class GameSaveData : MonoBehaviour
         }
     }
 
-    public IEnumerator LoadTheGame() {                                      // Load all other properties
-        SaveGameManager.Load();                                             // Load values
+    public IEnumerator LoadTheGame() {                                                                                  // Load all other properties
+        SaveGameManager.Load();                                                                                         // Load values
 
         yield return new WaitForSeconds(0.0001f);
 
-        charController.enabled = false;                                     // Disable character controller to control player
+        charController.enabled = false;                                                                                 // Disable character controller to control player
 
-        playerData = SaveGameManager.currentSaveData.playerData;            // Store player data to the PlayerData struct
-        optionsData = SaveGameManager.currentSaveData.optionsData;          // Store option data to the OptionsData struct
+        playerData = SaveGameManager.currentSaveData.playerData;                                                        // Store player data to the PlayerData struct
+        optionsData = SaveGameManager.currentSaveData.optionsData;                                                      // Store option data to the OptionsData struct
         
         if (isNewSeed) {
-            playerTransform.position = new Vector3(0f, 80f, 0f);            // Set players position
-            playerTransform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);     // Set players rotation
+            playerTransform.SetPositionAndRotation(new Vector3(0f, 80f, 0f), Quaternion.Euler(0.0f, 0.0f, 0.0f));       // Set player pos and rot
         } else {
-            playerTransform.position = playerData.playerPosition;           // Set players position
-            playerTransform.rotation = playerData.playerRotation;           // Set players rotation
+            playerTransform.SetPositionAndRotation(playerData.playerPosition, playerData.playerRotation);               // Set player pos and rot
         }
 
-        if (playerData.sneaking) {                                          // Sneak if the player is sneaking when saved
+        if (playerData.sneaking) {                                                                                      // Sneak if the player is sneaking when saved
             playerMovement.StartSneak();
         }
 
-        LoadSettings();                                                     // Load settings    
+        LoadSettings();                                                                                                 // Load settings    
 
-        charController.enabled = true;                                      // Enable character controller once finished
+        charController.enabled = true;                                                                                  // Enable character controller once finished
  
     }
 }
 
             // -- DATA TO STORE --
 [System.Serializable]
-public struct PlayerData {                                                  // Player data to save
+public struct PlayerData {                                                                                              // Player data to save
 
                 // -- PLAYER --
-    public Vector3 playerPosition;                                          // Player's position as of saving
-    public Quaternion playerRotation;                                       // Player's rotation as of saving
-    public bool sneaking;                                                   // Player's sneak state as of saving
+    public Vector3 playerPosition;                                                                                      // Player's position as of saving
+    public Quaternion playerRotation;                                                                                   // Player's rotation as of saving
+    public bool sneaking;                                                                                               // Player's sneak state as of saving
 }
 
 [System.Serializable]
