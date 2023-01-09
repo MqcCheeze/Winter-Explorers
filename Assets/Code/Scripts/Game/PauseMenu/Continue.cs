@@ -16,6 +16,12 @@ public class Continue : MonoBehaviour
     [Header("Animations")]                                          // Animations
     [SerializeField] private Animation pauseAnim;                   // Pause menu animation
 
+    private AudioSource clickSound;
+
+    private void Start() {
+        clickSound = GetComponent<AudioSource>();
+    }
+
     public void ContinueGame() {
         PauseMenu.pauseState = PauseMenu.PauseState.Unpaused;       // Set the game's state to unpaused
         StartCoroutine(ContinueGameAnimation());
@@ -29,6 +35,7 @@ public class Continue : MonoBehaviour
     }
 
     private IEnumerator ContinueGameAnimation() {
+        clickSound.Play();
         pauseAnim.Play("Deload");                                   // Play pause menu deload animation
         yield return new WaitForSeconds(0.25f);
         pause.SetActive(false);                                     // Disable pause menu

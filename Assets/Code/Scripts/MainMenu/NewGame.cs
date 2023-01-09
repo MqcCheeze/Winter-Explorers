@@ -20,11 +20,18 @@ public class NewGame : MonoBehaviour
 
     [SerializeField] private GameObject errorMessage;
 
+    private AudioSource clickSound;
+
+    private void Start() {
+        clickSound = GetComponent<AudioSource>();
+    }
+
     public void LoadNewGame() {                                     // Load a new world
         StartCoroutine(LoadNewGameAnimation());
     }
 
     private IEnumerator LoadNewGameAnimation() {
+        clickSound.Play();
         mainMenuAnim.Play("Deload");                                // Play menu deload animation
         yield return new WaitForSeconds(0.25f);
         mainMenu.SetActive(false);                                  // Hide main menu panel
@@ -37,6 +44,7 @@ public class NewGame : MonoBehaviour
     }
 
     private IEnumerator LoadMenuAnimation() {
+        clickSound.Play();
         newGameAnim.Play("Deload");                                 // Play new game menu deload animation
         yield return new WaitForSeconds(0.25f);
         newGame.SetActive(false);                                   // Hide new game menu panel
@@ -45,6 +53,7 @@ public class NewGame : MonoBehaviour
     }
 
     public void CreateNewWorld() {                                  // Create a new world
+        clickSound.Play();
         try {                                                       // Try to create a world
             GameSaveData.isNewSeed = true;                          // Say that the world is a new one
             GameSaveData.seed = Convert.ToInt32(seedInput.text);    // Set the seed to the one inputted

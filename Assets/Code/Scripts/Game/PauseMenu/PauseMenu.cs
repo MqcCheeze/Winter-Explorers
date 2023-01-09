@@ -34,7 +34,10 @@ public class PauseMenu : MonoBehaviour
     [Header("Animations")]                                          // Animations
     [SerializeField] private Animation pauseAnim;                   // Pause menu animation
 
+    private AudioSource clickSound;
+
     private void Start() {
+        clickSound = GetComponent<AudioSource>();
         pauseState = PauseState.Unpaused;                           // On start say the game isn't paused
     }
 
@@ -85,6 +88,7 @@ public class PauseMenu : MonoBehaviour
     }
 
     public void QuitInGame() {                                      // Go back to main menu
+        clickSound.Play();
         gameSaveData.SaveTheGame();
     }
 }

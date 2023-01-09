@@ -11,13 +11,18 @@ public class Credits : MonoBehaviour
     [Header("Animations")]                                  // Animations
     [SerializeField] private Animation mainMenuAnim;        // Main menu animation
     [SerializeField] private Animation creditsAnim;         // Credits menu animation
-    
 
+    private AudioSource clickSound;
+
+    private void Start() {
+        clickSound = GetComponent<AudioSource>();
+    }
     public void LoadCredits() {                             // Load credits menu
         StartCoroutine(LoadCreditsAnimation());
     }
 
     private IEnumerator LoadCreditsAnimation() {
+        clickSound.Play();
         mainMenuAnim.Play("Deload");                        // Play main menu deload animation
         yield return new WaitForSeconds(0.25f);
         mainMenu.SetActive(false);                          // Hide main menu panel
@@ -30,6 +35,7 @@ public class Credits : MonoBehaviour
     }
 
     private IEnumerator LoadMenuAnimation() {
+        clickSound.Play();
         creditsAnim.Play("Deload");                         // Play credits menu deload animation
         yield return new WaitForSeconds(0.25f);
         credits.SetActive(false);                           // Hide credits menu panel

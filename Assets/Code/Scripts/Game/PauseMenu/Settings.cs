@@ -10,11 +10,18 @@ public class Settings : MonoBehaviour
     [Header("Animations")]                                          // Animations
     [SerializeField] private Animation pauseAnim;                   // Pause menu animation
 
+    private AudioSource clickSound;
+
+    private void Start() {
+        clickSound = GetComponent<AudioSource>();
+    }
+
     public void LoadSettings() {                                        // Open settings menu
         StartCoroutine(LoadSettingsAnimation());
     }
 
     private IEnumerator LoadSettingsAnimation() {                       // Load settings
+        clickSound.Play();
         pauseAnim.Play("Deload");                                       // Play pause menu deload animation
         yield return new WaitForSeconds(0.25f);
         settings.SetActive(true);                                       // Enable settings menu
