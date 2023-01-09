@@ -45,6 +45,12 @@ public class PlayerInventory : MonoBehaviour {
     [SerializeField] private Vector3 dropPos;                                           // Drop location
     [SerializeField] private Transform pickUpObjectList;                                // Parent of the items the player can pick up
 
+    private AudioSource notificationSound;
+
+    private void Start() {
+        notificationSound = GetComponent<AudioSource>();
+    }
+
     private void FixedUpdate() {
         for (int i = 0; i < inventory.Count; i++) {
             itemImages[i].texture = inventory[i].GetComponent<RawImage>().texture;
@@ -114,7 +120,9 @@ public class PlayerInventory : MonoBehaviour {
 
             currentSlot = previousSlot;                                                             // Set the slot to the previous item
 
+            notificationSound.Play();
             inventoryFull.Play();                                                                   // Play inventory full animation
+            
         }
     }
 
