@@ -15,8 +15,8 @@ public class PlayerInventory : MonoBehaviour {
 
     [Header("Inventory")]
     public List<GameObject> inventory = new List<GameObject>();                         // Inventory
-    [HideInInspector] private List<RawImage> hotbarSelector = new List<RawImage>();     // Select what item is being held
-    [HideInInspector] public List<RawImage> itemImages = new List<RawImage>();          // Icons for images
+    public List<RawImage> hotbarSelector = new List<RawImage>();                        // Select what item is being held
+    public List<RawImage> itemImages = new List<RawImage>();                            // Icons for images
     [SerializeField] private Transform hand;
     public ItemChunk itemChunk;
 
