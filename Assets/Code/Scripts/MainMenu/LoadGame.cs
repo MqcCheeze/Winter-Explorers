@@ -22,7 +22,7 @@ public class LoadGame : MonoBehaviour
         clickSound.Play();
         mainMenuAnim.Play("Deload");                        // Play the main menu deload animation
         yield return new WaitForSeconds(0.3f);
-        GameSaveData.isNewSeed = false;                     // Say that the world isn't a new one
+        LoadTheGame.isNewSeed = false;                      // Say that the world isn't a new one
         SceneManager.LoadScene("Game");                     // Load game scene
     }
 }

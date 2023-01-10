@@ -29,7 +29,7 @@ public class PauseMenu : MonoBehaviour
     
 
     [Header("Saving/Loading")]
-    public GameSaveData gameSaveData;                               // Save the game data class
+    public SaveTheGame saveTheGame;                                 // Save the game data class
 
     [Header("Animations")]                                          // Animations
     [SerializeField] private Animation pauseAnim;                   // Pause menu animation
@@ -89,6 +89,6 @@ public class PauseMenu : MonoBehaviour
 
     public void QuitInGame() {                                      // Go back to main menu
         clickSound.Play();
-        gameSaveData.SaveTheGame();
+        saveTheGame.Save();
     }
 }

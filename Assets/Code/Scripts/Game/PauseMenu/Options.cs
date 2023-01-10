@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 public class Options : MonoBehaviour
 {
-    public OptionsData optionsData = new OptionsData();                                     // Call options data struct
+    private OptionsData optionsData = new();                                                // Call options data struct
 
     [Header("Animations")]                                                                  // Animations
     [SerializeField] private Animation pauseAnim;                                           // pause menu animation
@@ -19,24 +19,24 @@ public class Options : MonoBehaviour
     [SerializeField] private GameObject settings;                                           // Settings menu panel
     
     [Header("Settings")]                                                                    // Settings UI
-    public Slider brightness;                                                               // Brightness setting slider
-    public Slider gamma;                                                                    // Gamma setting slider
-    public Slider contrast;                                                                 // Contrast setting slider
-    public Toggle vignette;                                                                 // Enable/disable vignette
-    public Toggle bloom;                                                                    // Enable/disable bloom
-    public Toggle antiAliasing;                                                             // Enable/disable anti-aliasing
-    public Slider volume;                                                                   // Volume setting slider
+    [SerializeField] private Slider brightness;                                             // Brightness setting slider
+    [SerializeField] private Slider gamma;                                                  // Gamma setting slider
+    [SerializeField] private Slider contrast;                                               // Contrast setting slider
+    [SerializeField] private Toggle vignette;                                               // Enable/disable vignette
+    [SerializeField] private Toggle bloom;                                                  // Enable/disable bloom
+    [SerializeField] private Toggle antiAliasing;                                           // Enable/disable anti-aliasing
+    [SerializeField] private Slider volume;                                                 // Volume setting slider
 
     [Header("Global Volume")]
-    [SerializeField] private Volume globalVolume;
+    [SerializeField] private Volume globalVolume;                                           // Global volume setting                               
 
     [Header("Camera")]
-    [SerializeField] private UniversalAdditionalCameraData mainCamera;
+    [SerializeField] private UniversalAdditionalCameraData mainCamera;                      // Anti-aliasing setting
 
     [Header("Brightness")]
-    [SerializeField] private Image brightnessOverlay;
+    [SerializeField] private Image brightnessOverlay;                                       // Brightness setting
 
-    private AudioSource clickSound;
+    private AudioSource clickSound;                                                         // Save button click sound effect
 
     private void Start() {
         clickSound = GetComponent<AudioSource>();
@@ -56,20 +56,16 @@ public class Options : MonoBehaviour
         overlayAmount.a = brightness.value;
         brightnessOverlay.color = overlayAmount;
 
-        LiftGammaGain gammaSetting;
-        globalVolume.profile.TryGet<LiftGammaGain>(out gammaSetting);                       // Gamma
+        globalVolume.profile.TryGet<LiftGammaGain>(out LiftGammaGain gammaSetting);         // Gamma
         gammaSetting.gamma.value = new Vector4(1f, 1f, 1f, gamma.value);
 
-        ColorAdjustments contrastSetting;
-        globalVolume.profile.TryGet<ColorAdjustments>(out contrastSetting);                 // Contrast
+        globalVolume.profile.TryGet<ColorAdjustments>(out ColorAdjustments contrastSetting);// Contrast
         contrastSetting.contrast.value = contrast.value;
 
-        Vignette vignetteSetting;
-        globalVolume.profile.TryGet<Vignette>(out vignetteSetting);                         // Vignette
+        globalVolume.profile.TryGet<Vignette>(out Vignette vignetteSetting);                // Vignette
         vignetteSetting.active = vignette.isOn;
 
-        Bloom bloomSetting;
-        globalVolume.profile.TryGet<Bloom>(out bloomSetting);                               // Bloom
+        globalVolume.profile.TryGet<Bloom>(out Bloom bloomSetting);                         // Bloom
         bloomSetting.active = bloom.isOn;
 
         switch (antiAliasing.isOn) {                                                        // Anti aliasing

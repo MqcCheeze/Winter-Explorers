@@ -55,8 +55,8 @@ public class NewGame : MonoBehaviour
     public void CreateNewWorld() {                                  // Create a new world
         clickSound.Play();
         try {                                                       // Try to create a world
-            GameSaveData.isNewSeed = true;                          // Say that the world is a new one
-            GameSaveData.seed = Convert.ToInt32(seedInput.text);    // Set the seed to the one inputted
+            LoadTheGame.isNewSeed = true;                           // Say that the world is a new one
+            LoadTheGame.seed = Convert.ToInt32(seedInput.text);     // Set the seed to the one inputted
             SceneManager.LoadScene("Game");                         // Load game scene
         }
         catch {                                                     // If the number inputted in the seed text box exceeds the 32-bit integer limit
