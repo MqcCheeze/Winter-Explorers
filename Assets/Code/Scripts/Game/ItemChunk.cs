@@ -6,7 +6,10 @@ public class ItemChunk : MonoBehaviour
 {
     public Transform parentChunk;
 
-    private void Start() {
+    private void Awake() {
         parentChunk = transform.parent;
+        if (parentChunk.CompareTag("Chest")) {
+            parentChunk = parentChunk.transform.parent;
+        }
     }
 }

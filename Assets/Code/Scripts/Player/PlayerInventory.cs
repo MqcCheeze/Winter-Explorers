@@ -52,6 +52,10 @@ public class PlayerInventory : MonoBehaviour {
     }
 
     private void FixedUpdate() {
+        if (changedSlot) {
+            ChangeSlot();                                                               // Change slot
+        }
+
         for (int i = 0; i < inventory.Count; i++) {
             itemImages[i].texture = inventory[i].GetComponent<RawImage>().texture;
         }
@@ -63,11 +67,7 @@ public class PlayerInventory : MonoBehaviour {
 
         if (Input.GetKeyDown(KeyCode.Q)) {                                              // Drop if Q is pressed
             Drop();                                                 
-        }
-
-        if (changedSlot) {
-            ChangeSlot();                                                               // Change slot
-        }
+        } 
     }
 
     private void PickUpRay() {                                                          // Shoot out a ray infront of player to detetect any objects
@@ -75,15 +75,7 @@ public class PlayerInventory : MonoBehaviour {
         if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, pickUpRange, pickUpLayer)) {
             pickUpHint.SetActive(true);
             if (Input.GetKeyDown(KeyCode.E)) {                                                      // If player presses the pick up key (E)
-                if (currentItem != null) {                                                          // If the player is holding an item
-                    currentItem.GetComponent<Renderer>().enabled = false;                           // Disable rendering for the durrent item
-                }
-
-                previousItem = currentItem;                                                         // Set previous item to current item
-                previousSlot = currentSlot;                                                         // Set previous slot to current slot
-
-                currentItem = hitInfo.collider.gameObject;                                          // Swap current item with newer item
-                PickUp();                                                                           // Pick up the object
+                PickUp(hitInfo.collider.gameObject);                                                // Pick up the object
             } else if (Input.GetMouseButtonDown(0)) {
                 Destroy(hitInfo.transform.gameObject);
             }
@@ -92,11 +84,18 @@ public class PlayerInventory : MonoBehaviour {
         }
     }
 
-    private void PickUp() {                                                                         // Pick up the object
+    public void PickUp(GameObject currentItem) {                                                    // Pick up the object
+        if (currentItem != null) {                                                                  // If the player is holding an item
+            currentItem.GetComponent<Renderer>().enabled = false;                                   // Disable rendering for the durrent item
+        }
+
+        previousItem = currentItem;                                                                 // Set previous item to current item
+        previousSlot = currentSlot;                                                                 // Set previous slot to current slot
+
         if (inventory.Count < 9) {                                                                  // If inventory isn't full
             currentItem.transform.SetParent(hand);                                                  // Set object to a child of player's hand
             currentItem.transform.localPosition = Vector3.zero;                                     // Reset item's position
-            currentItem.transform.localRotation = Quaternion.Euler(0f, 090f, 0f);                   // Rotate item
+            currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);                    // Rotate item
             currentItem.GetComponent<Collider>().enabled = false;                                   // Disable collider when in hand
 
             currentItemBody = currentItem.GetComponent<Rigidbody>();                                // Get the item's rigidbody
@@ -124,14 +123,15 @@ public class PlayerInventory : MonoBehaviour {
             inventoryFull.Play();                                                                   // Play inventory full animation
             
         }
+        ChangeSlot();
     }
 
     private void Drop() {
         if (holdingItem) {
-            currentItem.transform.localPosition = dropPos;                                          // Set object position to drop position
-            currentItem.transform.localRotation = Quaternion.Euler(0f, 090f, 0f);                   // Reset rotation
+            currentItem.transform.localPosition = dropPos;                                          // Set object position and rotation to drop
+            currentItem.transform.rotation = Quaternion.Euler(0f, 0f, 0f);     
             itemChunk = currentItem.GetComponent<ItemChunk>();
-            currentItem.transform.SetParent(itemChunk.parentChunk);                                      // Put object back into Objects list
+            currentItem.transform.SetParent(itemChunk.parentChunk);                                 // Put object back into Objects list
             currentItem.GetComponent<Collider>().enabled = true;                                    // Enable collision
 
             currentItemBody.constraints = RigidbodyConstraints.None;                                // Disable constraints
@@ -148,11 +148,9 @@ public class PlayerInventory : MonoBehaviour {
 
             if (currentSlot <= inventory.Count - 1) {
                 changedSlot = true;
-
             } else if (currentSlot == inventory.Count && inventory.Count != 0) {                    // If there is more items
                 currentSlot -= 1;
                 changedSlot = true;
-
                 hotbarSelector[currentSlot].color = selected;                                       // Select next item
 
             }
