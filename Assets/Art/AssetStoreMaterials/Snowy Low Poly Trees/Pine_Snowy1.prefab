@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: -3351070604867461331}
   m_Layer: 6
   m_Name: Pine_Snowy1
-  m_TagString: Untagged
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
