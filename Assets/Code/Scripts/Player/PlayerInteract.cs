@@ -12,12 +12,12 @@ public class PlayerInteract : MonoBehaviour
     [SerializeField] private GameObject currentObject;                                                          // The current object
     private GameObject player;
 
-    private void Start() {
+    void Start() {
         player = this.gameObject;                                                                               // Set the player gameobject variable
     }
 
     void Update() {
-        InteractRay();                                                                                          // Interact up raycast
+        InteractRay();                                                                                          // Interact raycast
     }
 
     private void InteractRay() {                                                                                // Shoot out a ray infront of player to detetect any objects
@@ -34,17 +34,10 @@ public class PlayerInteract : MonoBehaviour
     }
 
     private void Interact() {                                                                                   // Interactions
-        /*
-        if (currentObject.CompareTag("Chest")) {                                                                // If the object is a chest
-            currentObject.GetComponent<Chest>().ChestInteract(player);                                          // Get the chest script and interact with the chest on the player
-        }
-        */
         switch (currentObject.tag) {
             case "Chest":
                 currentObject.GetComponent<Chest>().ChestInteract(player);                                      // Get the chest script and interact with the chest on the player
                 break;
         }
     }
-
-
 }

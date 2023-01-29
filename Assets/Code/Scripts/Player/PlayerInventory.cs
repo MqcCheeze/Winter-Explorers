@@ -47,11 +47,11 @@ public class PlayerInventory : MonoBehaviour {
 
     private AudioSource notificationSound;
 
-    private void Start() {
+    void Start() {
         notificationSound = GetComponent<AudioSource>();
     }
 
-    private void FixedUpdate() {
+    void FixedUpdate() {
         if (changedSlot) {
             ChangeSlot();                                                               // Change slot
         }
@@ -61,7 +61,7 @@ public class PlayerInventory : MonoBehaviour {
         }
     }
 
-    private void Update() {
+    void Update() {
         PickUpRay();                                                                    // Pick up raycast
         Scrolling();                                                                    // See if player is scrolling through inventory
 
@@ -76,8 +76,6 @@ public class PlayerInventory : MonoBehaviour {
             pickUpHint.SetActive(true);
             if (Input.GetKeyDown(KeyCode.E)) {                                                      // If player presses the pick up key (E)
                 PickUp(hitInfo.collider.gameObject);                                                // Pick up the object
-            } else if (Input.GetMouseButtonDown(0)) {
-                Destroy(hitInfo.transform.gameObject);
             }
         } else {
             pickUpHint.SetActive(false);
@@ -119,11 +117,18 @@ public class PlayerInventory : MonoBehaviour {
 
             currentSlot = previousSlot;                                                             // Set the slot to the previous item
 
-            notificationSound.Play();
-            inventoryFull.Play();                                                                   // Play inventory full animation
+            StartCoroutine(InventoryFull());                                                        // Play inventory full animation
             
         }
         ChangeSlot();
+    }
+
+    private IEnumerator InventoryFull() {
+        notificationSound.Play();
+        inventoryFull.gameObject.SetActive(true);
+        inventoryFull.Play();
+        yield return new WaitForSeconds(1.15f);
+        inventoryFull.gameObject.SetActive(false);
     }
 
     private void Drop() {

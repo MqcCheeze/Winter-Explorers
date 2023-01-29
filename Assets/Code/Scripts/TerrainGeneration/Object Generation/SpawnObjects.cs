@@ -17,7 +17,7 @@ public class SpawnObjects : MonoBehaviour
     public bool alreadySpawnedTrees;
 
     private Vector3 treeSpawning = new Vector3(0f, -0.125f, 0f);
-    private Vector3 rockSpawning = new Vector3(0f, -0.1f, 0f);
+    private Vector3 rockSpawning = new Vector3(0f, -0.2f, 0f);
     private Vector3 objectSpawning = new Vector3(0f, 0.5f, 0f);
 
     private void Start() {
