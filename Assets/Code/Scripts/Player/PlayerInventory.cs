@@ -19,6 +19,8 @@ public class PlayerInventory : MonoBehaviour {
     public List<RawImage> itemImages = new List<RawImage>();                            // Icons for images
     [SerializeField] private Transform hand;
     public ItemChunk itemChunk;
+    [SerializeField] private Transform world;
+    private Dictionary<string, Vector3> itemPositions = new Dictionary<string, Vector3>();
 
     [Header("Colours")]
     [SerializeField] private Color selected;                                            // Colour of selected inventory slot
@@ -49,6 +51,12 @@ public class PlayerInventory : MonoBehaviour {
 
     void Start() {
         notificationSound = GetComponent<AudioSource>();
+
+        itemPositions.Add("Sword", new Vector3(0f, 0f, 0f));
+        itemPositions.Add("Axe", new Vector3(-0.71f, 0.5f, -0.73f));
+        itemPositions.Add("Pickaxe", new Vector3(-0.71f, 0.47f, -0.82f));
+        itemPositions.Add("Campfire", new Vector3(0f, 0f, 0f));
+        itemPositions.Add("Bottle", new Vector3(0f, 0f, 0f));
     }
 
     void FixedUpdate() {
@@ -92,8 +100,32 @@ public class PlayerInventory : MonoBehaviour {
 
         if (inventory.Count < 9) {                                                                  // If inventory isn't full
             currentItem.transform.SetParent(hand);                                                  // Set object to a child of player's hand
-            currentItem.transform.localPosition = Vector3.zero;                                     // Reset item's position
-            currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);                    // Rotate item
+            switch (currentItem.tag) {
+                case "Sword":
+                    currentItem.transform.localPosition = itemPositions["Sword"];                   // Reset item's position
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);            // Rotate item
+                    break;
+                case "Axe":
+                    currentItem.transform.localPosition = itemPositions["Axe"];                     // Reset item's position
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, -24f);          // Rotate item
+                    break;
+                case "Pickaxe":
+                    currentItem.transform.localPosition = itemPositions["Pickaxe"];                 // Reset item's position
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, -24f);          // Rotate item
+                    break;
+                case "Campfire":
+                    currentItem.transform.localPosition = itemPositions["Campfire"];                // Reset item's position
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);            // Rotate item
+                    break;
+                case "Bottle":
+                    currentItem.transform.localPosition = itemPositions["Bottle"];                  // Reset item's position
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);            // Rotate item
+                    break;
+                default:
+                    currentItem.transform.localPosition = Vector3.zero;                             // Reset item's position
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);            // Rotate item
+                    break;
+            }
             currentItem.GetComponent<Collider>().enabled = false;                                   // Disable collider when in hand
 
             currentItemBody = currentItem.GetComponent<Rigidbody>();                                // Get the item's rigidbody
@@ -135,8 +167,13 @@ public class PlayerInventory : MonoBehaviour {
         if (holdingItem) {
             currentItem.transform.localPosition = dropPos;                                          // Set object position and rotation to drop
             currentItem.transform.rotation = Quaternion.Euler(0f, 0f, 0f);     
-            itemChunk = currentItem.GetComponent<ItemChunk>();
-            currentItem.transform.SetParent(itemChunk.parentChunk);                                 // Put object back into Objects list
+            try {
+                itemChunk = currentItem.GetComponent<ItemChunk>();
+                currentItem.transform.SetParent(itemChunk.parentChunk);                             // Put object back into chunk
+            } catch {
+                currentItem.transform.SetParent(world);
+            }
+            
             currentItem.GetComponent<Collider>().enabled = true;                                    // Enable collision
 
             currentItemBody.constraints = RigidbodyConstraints.None;                                // Disable constraints

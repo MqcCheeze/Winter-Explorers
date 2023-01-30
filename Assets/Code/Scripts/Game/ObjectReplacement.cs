@@ -8,7 +8,7 @@ public class ObjectReplacement : MonoBehaviour
     private void FixedUpdate() {
         if (this.transform.position.y < -1f) {
             RaycastHit hit;
-            Physics.Raycast(new Vector3(this.transform.position.x, 100f, this.transform.position.z), Vector3.down, out hit, 150f);
+            Physics.Raycast(new Vector3(this.transform.position.x, 100f, this.transform.position.z), Vector3.down, out hit, 100f);
             this.transform.position = hit.point + groundPos;
         }
     }

@@ -12,7 +12,8 @@ public class PauseMenu : MonoBehaviour
     public enum PauseState {                                        // Game paused/unpaused state
         Paused,                                                     // Paused
         Unpaused,                                                   // Unpaused
-        InSettings
+        InSettings,                                                 // In settings
+        Inventory                                                   // In inventory
     }
 
     public static PauseState pauseState;                            // Call the enum PauseState
@@ -21,6 +22,7 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] private GameObject pause;                      // Pause panel
     [SerializeField] private GameObject settings;                   // Settings panel
     [SerializeField] private GameObject inGameGUI;                  // In-game GUI panel
+    [SerializeField] private GameObject inventory;                  // Inventory panel
 
     [Header("Pause Menu Stuff")]                                    // Pause menu stuff
     [SerializeField] private PlayerCamera playerCamera;             // Camera toggle ability to look around while paused
@@ -44,6 +46,8 @@ public class PauseMenu : MonoBehaviour
     private void Update() {
         if (Input.GetKeyDown(KeyCode.Escape)) {                     // Only show pause menu if in-game
             PauseGame();                                            // Pause game
+        } else if (Input.GetKeyDown(KeyCode.Tab)) {
+            Inventory();
         }
     }    
 
@@ -85,6 +89,33 @@ public class PauseMenu : MonoBehaviour
         playerMovement.enabled = true;
         playerInventory.enabled = true;
         inGameGUI.SetActive(true);                                  // Enable in-game GUI
+    }
+
+    public void Inventory() { 
+        switch (pauseState) {
+            case PauseState.Unpaused:
+                pauseState = PauseState.Inventory;
+                Cursor.lockState = CursorLockMode.None;             // Unlock cursor
+                inGameGUI.SetActive(false);
+                inventory.SetActive(true);
+
+                playerCamera.enabled = false;                       // Disable abilities
+                playerMovement.enabled = false;
+                playerInventory.enabled = false;
+
+                break;
+            case PauseState.Inventory:
+                pauseState = PauseState.Unpaused;
+                Cursor.lockState = CursorLockMode.Locked;           // Lock cursor
+                inGameGUI.SetActive(true);
+                inventory.SetActive(false);
+
+                playerCamera.enabled = true;                        // Enable abilities
+                playerMovement.enabled = true;
+                playerInventory.enabled = true;
+
+                break;
+        }
     }
 
     public void QuitInGame() {                                      // Go back to main menu
