@@ -60,9 +60,7 @@ public class SpawnObjects : MonoBehaviour
     private IEnumerator RunTimeSpawn() {
         while (true) {
             yield return new WaitForSeconds(Random.Range(5, 15));
-            Debug.ClearDeveloperConsole();
             SpawnObjectsInWorld();
-            Debug.Log("Attempted to spawn objects");
         }
     }
 }

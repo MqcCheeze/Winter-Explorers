@@ -7,9 +7,13 @@ public class ItemChunk : MonoBehaviour
     public Transform parentChunk;                           // The chunk the object is in
 
     private void Awake() {
-        parentChunk = transform.parent;                     // Set the parent chunk to the item's parent
-        if (parentChunk.CompareTag("Chest")) {              // If the item was in the chest
-            parentChunk = parentChunk.transform.parent;     // Set the parent chunk to the parent of the chest
+        try {
+            parentChunk = transform.parent;                     // Set the parent chunk to the item's parent
+            if (parentChunk.CompareTag("Chest")) {              // If the item was in the chest
+                parentChunk = parentChunk.transform.parent;     // Set the parent chunk to the parent of the chest
+            }
+        } catch {
+
         }
     }
 }

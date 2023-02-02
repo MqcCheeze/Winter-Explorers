@@ -1,8 +1,12 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
+
+    [SerializeField] private EventSystem eventSystem;
+
     [Header("Player")]                                                  // Player
     [SerializeField] private CharacterController playerController;      // Player controller
     [SerializeField] private Transform playerBody;                      // Player body
@@ -32,6 +36,10 @@ public class PlayerMovement : MonoBehaviour {
     private Vector3 move;
     private float x;                                                    // Left and right
     private float z;                                                    // Forwards and backwards
+    [SerializeField] private CinemachineVirtualCamera cinemachineVC;    // Main camera shake when moving
+    private CinemachineBasicMultiChannelPerlin cinemachineBMCP;
+    private float notMovingAmplitude = 0.5f;
+    private float movingAmplitude = 2;
 
     [Header("Grounded")]                                                // Is player on the ground?
     [SerializeField] private Transform groundCheck;                     // Object to check ground with
@@ -51,35 +59,46 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] private LayerMask ceilingMask;                     // Check the objects it should be looking for
 
     void Start() {
+        eventSystem.PlayerInteractions += EventSystem_PlayerInteractions;
+
         canMove = true;                                                 // Allow player to move
         canJump = true;                                                 // Allow player to jump
         canSprint = true;                                               // Allow player to sprint
         canSneak = true;                                                // Allow player to sneak
+        cinemachineBMCP = cinemachineVC.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
     }
-    void Update() {
 
+    private void FixedUpdate() {
         grounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);   // Check if the player is touching the ground
 
-        cannotUnsneak = Physics.Raycast(ceilingCheck.position, Vector3.up, ceilingDistance, ceilingMask);
-
-        if (canMove) {
-            Move();
-        }
-
-        if (Input.GetButtonDown("Jump") && grounded && canJump) {                           // Jump if the player is on the ground and can jump
-            Jump();
+        if (isSneaking) {
+            cannotUnsneak = Physics.Raycast(ceilingCheck.position, Vector3.up, ceilingDistance, ceilingMask);
         }
 
         if (grounded && velocity.y < 0f) {                                                  // Gravity when not in the air
             velocity.y = -2;
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.LeftControl)) {                                        // Sprint
-            Sprint();
+    void Update() {
+        if (canMove) {
+            Move();
         }
+    }
 
-        if (Input.GetKeyDown(KeyCode.LeftShift)) {                                          // Sneak
-            Sneak();
+    private void EventSystem_PlayerInteractions(object sender, EventSystem.KeyPressed e) {
+        switch (e.keyPressed) {
+            case "lShift":
+                Sneak();
+                break;
+            case "lControl":
+                Sprint();
+                break;
+            case "space":
+                if (grounded && canJump) {
+                    Jump();
+                }
+                break;
         }
     }
 
@@ -88,7 +107,14 @@ public class PlayerMovement : MonoBehaviour {
         z = Input.GetAxis("Vertical");                                                      // Forwards and backwards
 
         move = (transform.right * x) + (transform.forward * z);                             // Where to move to
-        playerController.Move(move * speed * Time.deltaTime);                               // Move the player with the set speed
+        if (x > 0 || z > 0) {
+            cinemachineBMCP.m_AmplitudeGain = movingAmplitude;
+            cinemachineBMCP.m_FrequencyGain = movingAmplitude;
+        } else {
+            cinemachineBMCP.m_AmplitudeGain = notMovingAmplitude;
+            cinemachineBMCP.m_FrequencyGain = notMovingAmplitude;
+        }
+        playerController.Move(speed * Time.deltaTime * move);                               // Move the player with the set speed
                                                                                             // Time.deltaTime so player moves at the same speed on all hardware
 
         velocity.y += gravity * Time.deltaTime;                                             // Gravity

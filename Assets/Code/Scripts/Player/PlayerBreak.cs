@@ -4,45 +4,65 @@ using UnityEngine;
 
 public class PlayerBreak : MonoBehaviour
 {
+    [SerializeField] private EventSystem eventSystem;
+
     [SerializeField] private float breakRange;                                                              // Range of the break ray
     [SerializeField] private LayerMask breakLayer;                                                          // The layers the break ray will hit
     [SerializeField] private GameObject breakHint;                                                          // Break hint
 
     [SerializeField] private GameObject currentObject;                                                      // The current object
-    private GameObject player;
     private PlayerInventory playerInventory;
 
     void Start() {
-        player = this.gameObject;                                                                           // Set the player gameobject variable
+        eventSystem.PlayerInteractions += EventSystem_PlayerInteractions;
+        playerInventory = GetComponent<PlayerInventory>();                                                  // Get the player inventory
     }
 
-    void Update() {
+    void FixedUpdate() {
         BreakRay();                                                                                         // Break raycast
+    }
+    private void EventSystem_PlayerInteractions(object sender, EventSystem.KeyPressed e) {
+        if (e.keyPressed == "lMouse") {
+            RaycastHit hitInfo;
+            if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, breakRange, breakLayer)) {
+                currentObject = hitInfo.collider.gameObject;                                                // Swap current object with newer object
+                Break();                                                                                    // Break the object                                          
+            }
+            
+        }
     }
 
     private void BreakRay() {                                                                               // Shoot out a ray infront of player to detetect any objects
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, breakRange, breakLayer)) {
             breakHint.SetActive(true);                                                                      // Show the break hint                                                   
-            if (Input.GetMouseButtonDown(0)) {                                                              // If player presses the break button (LMB)
-                currentObject = hitInfo.collider.gameObject;                                                // Swap current object with newer object
-                Break();                                                                                    // Break the object
-            }
         } else {
             breakHint.SetActive(false);                                                                     // Hide the break hint
         }
     }
 
     private void Break() {                                                                                  // Break object the player is looking at
-        playerInventory = player.GetComponent<PlayerInventory>();                                           // Get the player inventory
+        
         switch (currentObject.tag) {
             case "Tree":
-                Debug.Log($"{currentObject.name} broken");
-                Destroy(currentObject);
+                try {
+                    if (playerInventory.currentItem.CompareTag("Axe")) {
+                        Debug.Log($"{currentObject.name} broken");
+                        Destroy(currentObject);
+                    }
+                } catch {
+
+                }
                 break;
             case "Rock":
-                Debug.Log($"{currentObject.name} broken");
-                Destroy(currentObject);
+                try {
+                    if (playerInventory.currentItem.CompareTag("Pickaxe")) {
+                        Debug.Log($"{currentObject.name} broken");
+                        Destroy(currentObject);
+                    }
+                } catch {
+
+                }
                 break;
         }
     }

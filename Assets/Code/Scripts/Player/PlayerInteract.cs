@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,6 +6,8 @@ using UnityEngine;
 
 public class PlayerInteract : MonoBehaviour
 {
+    [SerializeField] private EventSystem eventSystem;
+
     [SerializeField] private float interactRange;                                                               // Range of the interaction ray
     [SerializeField] private LayerMask interactLayer;                                                           // The layers the interact ray will hit
     [SerializeField] private GameObject interactionHint;                                                        // Interaction hint
@@ -13,21 +16,29 @@ public class PlayerInteract : MonoBehaviour
     private GameObject player;
 
     void Start() {
+        eventSystem.PlayerInteractions += EventSystem_PlayerInteractions;
+
         player = this.gameObject;                                                                               // Set the player gameobject variable
     }
 
-    void Update() {
+    void FixedUpdate() {
         InteractRay();                                                                                          // Interact raycast
+    }
+
+    private void EventSystem_PlayerInteractions(object sender, EventSystem.KeyPressed e) {
+        if (e.keyPressed == "e") {
+            RaycastHit hitInfo;
+            if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, interactRange)) {
+                currentObject = hitInfo.collider.gameObject;                                                // Swap current item with newer item
+                Interact();                                                                                 // Pick up the object
+            }
+        }
     }
 
     private void InteractRay() {                                                                                // Shoot out a ray infront of player to detetect any objects
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, interactRange, interactLayer)) {
-            interactionHint.SetActive(true);                                                                    // Show the interaction hint                                                   
-            if (Input.GetKeyDown(KeyCode.E)) {                                                                  // If player presses the pick up key (E)
-                currentObject = hitInfo.collider.gameObject;                                                    // Swap current item with newer item
-                Interact();                                                                                     // Pick up the object
-            }
+            interactionHint.SetActive(true);                                                                // Show the interaction hint    
         } else {
             interactionHint.SetActive(false);                                                                   // Hide the interactio hint
         }

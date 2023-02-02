@@ -9,6 +9,8 @@ using UnityEngine.UI;
 
 public class PlayerInventory : MonoBehaviour {
 
+    [SerializeField] private EventSystem eventSystem;
+
     [SerializeField] private bool canPickUp;                                            // Enable/disable pickup ability
     private bool changedSlot;
     [SerializeField] private bool canScroll;
@@ -20,14 +22,15 @@ public class PlayerInventory : MonoBehaviour {
     [SerializeField] private Transform hand;
     public ItemChunk itemChunk;
     [SerializeField] private Transform world;
-    private Dictionary<string, Vector3> itemPositions = new Dictionary<string, Vector3>();
+
+    private Dictionary<string, Vector3> itemPositions = new Dictionary<string, Vector3>();      // Dictionary to store item positions in hand
 
     [Header("Colours")]
     [SerializeField] private Color selected;                                            // Colour of selected inventory slot
     [SerializeField] private Color unselected;                                          // Colour of unselected inventory slot
 
     [Header("Current Item")]
-    [SerializeField] private GameObject currentItem;                                    // Item currently held
+    public GameObject currentItem;                                                      // Item currently held
     [SerializeField] private Rigidbody currentItemBody;                                 // Item body currently held
     [SerializeField] private int currentSlot;                                           // The slot the current item is in
 
@@ -50,9 +53,10 @@ public class PlayerInventory : MonoBehaviour {
     private AudioSource notificationSound;
 
     void Start() {
+        eventSystem.PlayerInteractions += EventSystem_PlayerInteractions;
         notificationSound = GetComponent<AudioSource>();
 
-        itemPositions.Add("Sword", new Vector3(0f, 0f, 0f));
+        itemPositions.Add("Sword", new Vector3(-0.73f, 0.28f, -0.72f));                 // Add the dictionary key and its value to the dictionary
         itemPositions.Add("Axe", new Vector3(-0.71f, 0.5f, -0.73f));
         itemPositions.Add("Pickaxe", new Vector3(-0.71f, 0.47f, -0.82f));
         itemPositions.Add("Campfire", new Vector3(0f, 0f, 0f));
@@ -60,6 +64,7 @@ public class PlayerInventory : MonoBehaviour {
     }
 
     void FixedUpdate() {
+        PickUpRay();                                                                    // Pick up raycast
         if (changedSlot) {
             ChangeSlot();                                                               // Change slot
         }
@@ -69,22 +74,34 @@ public class PlayerInventory : MonoBehaviour {
         }
     }
 
-    void Update() {
-        PickUpRay();                                                                    // Pick up raycast
-        Scrolling();                                                                    // See if player is scrolling through inventory
-
-        if (Input.GetKeyDown(KeyCode.Q)) {                                              // Drop if Q is pressed
-            Drop();                                                 
-        } 
+    private void EventSystem_PlayerInteractions(object sender, EventSystem.KeyPressed e) {
+        switch (e.keyPressed) {
+            case "e":
+                RaycastHit hitInfo;
+                if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, pickUpRange, pickUpLayer)) {
+                    PickUp(hitInfo.collider.gameObject);
+                }
+                break;
+            case "q":
+                Drop();
+                break;
+            case "mouseBack":
+                if (canScroll) {
+                    ScrollBack();
+                }
+                break;
+            case "mouseForward":
+                if (canScroll) {
+                    ScrollForward();
+                }
+                break;
+        }
     }
 
     private void PickUpRay() {                                                          // Shoot out a ray infront of player to detetect any objects
         RaycastHit hitInfo;
         if (Physics.Raycast(new Ray(Camera.main.transform.position, Camera.main.transform.forward), out hitInfo, pickUpRange, pickUpLayer)) {
             pickUpHint.SetActive(true);
-            if (Input.GetKeyDown(KeyCode.E)) {                                                      // If player presses the pick up key (E)
-                PickUp(hitInfo.collider.gameObject);                                                // Pick up the object
-            }
         } else {
             pickUpHint.SetActive(false);
         }
@@ -103,7 +120,7 @@ public class PlayerInventory : MonoBehaviour {
             switch (currentItem.tag) {
                 case "Sword":
                     currentItem.transform.localPosition = itemPositions["Sword"];                   // Reset item's position
-                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);            // Rotate item
+                    currentItem.transform.localRotation = Quaternion.Euler(9f, 123f, -24f);         // Rotate item
                     break;
                 case "Axe":
                     currentItem.transform.localPosition = itemPositions["Axe"];                     // Reset item's position
@@ -201,35 +218,38 @@ public class PlayerInventory : MonoBehaviour {
         currentItemBody = null;                                                                     // Set the current item's body to nothing
 
     }
+    private void ScrollBack() {
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f) {                                          // Scroll down
+            if (currentSlot > 0) {
+                previousSlot = currentSlot;
+                previousItem = currentItem;
 
-    private void Scrolling() {
-        if (canScroll) {
-            if (Input.GetAxis("Mouse ScrollWheel") > 0f) {                                          // Scroll down
-                if (currentSlot > 0) {
-                    previousSlot = currentSlot;
-                    previousItem = currentItem;
-
-                    currentSlot -= 1;                                                               // Change current slot to previous slot
-                    changedSlot = true;
-                } else if (currentSlot == 0 && inventory.Count == 1) {
-                    changedSlot = true;
-                }
-
-            } else if (Input.GetAxis("Mouse ScrollWheel") < 0f) {                                   // Scroll up
-                if (currentSlot < inventory.Count - 1) {
-                    previousSlot = currentSlot;
-                    previousItem = currentItem;
-
-                    currentSlot += 1;                                                               // Change current slot to next slot
-                    changedSlot = true;
-                } else if (currentSlot == inventory.Count - 1 && inventory.Count == 1) {
-                    changedSlot = true;
-                }
+                currentSlot -= 1;                                                               // Change current slot to previous slot
+                changedSlot = true;
+            } else if (currentSlot == 0 && inventory.Count == 1) {
+                changedSlot = true;
             }
 
-            hotbarSelector[previousSlot].color = unselected;
-            hotbarSelector[currentSlot].color = selected;                                           // Indicate what slot is selected
         }
+        hotbarSelector[previousSlot].color = unselected;
+        hotbarSelector[currentSlot].color = selected;                                           // Indicate what slot is selected
+    }
+
+    private void ScrollForward() {
+        if (Input.GetAxis("Mouse ScrollWheel") < 0f) {                                          // Scroll up
+            if (currentSlot < inventory.Count - 1) {
+                previousSlot = currentSlot;
+                previousItem = currentItem;
+
+                currentSlot += 1;                                                               // Change current slot to next slot
+                changedSlot = true;
+            } else if (currentSlot == inventory.Count - 1 && inventory.Count == 1) {
+                changedSlot = true;
+            }
+        }
+
+        hotbarSelector[previousSlot].color = unselected;
+        hotbarSelector[currentSlot].color = selected;                                           // Indicate what slot is selected
     }
 
     private void ChangeSlot() {

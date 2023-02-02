@@ -9,6 +9,7 @@ using Unity.VisualScripting;
 
 public class PauseMenu : MonoBehaviour
 {
+    [SerializeField] private EventSystem eventSystem;
     public enum PauseState {                                        // Game paused/unpaused state
         Paused,                                                     // Paused
         Unpaused,                                                   // Unpaused
@@ -39,17 +40,18 @@ public class PauseMenu : MonoBehaviour
     private AudioSource clickSound;
 
     private void Start() {
+        eventSystem.PlayerInteractions += EventSystem_PlayerInteractions;
         clickSound = GetComponent<AudioSource>();
         pauseState = PauseState.Unpaused;                           // On start say the game isn't paused
     }
 
-    private void Update() {
-        if (Input.GetKeyDown(KeyCode.Escape)) {                     // Only show pause menu if in-game
-            PauseGame();                                            // Pause game
-        } else if (Input.GetKeyDown(KeyCode.Tab)) {
+    private void EventSystem_PlayerInteractions(object sender, EventSystem.KeyPressed e) {
+        if (e.keyPressed == "escape") {
+            PauseGame();
+        } else if (e.keyPressed == "tab") {
             Inventory();
         }
-    }    
+    }
 
     public void PauseGame() {                                       // Pause game
         switch (pauseState) {                                       // Check what the game state is
