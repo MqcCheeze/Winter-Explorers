@@ -47,7 +47,7 @@ public class PlayerInventory : MonoBehaviour {
     [SerializeField] private Animation inventoryFull;                                   // Notify the player when their inventory is full
 
     [Header("Drop item")]
-    [SerializeField] private Vector3 dropPos;                                           // Drop location
+    [SerializeField] private Transform dropPos;                                         // Drop location
     [SerializeField] private Transform pickUpObjectList;                                // Parent of the items the player can pick up
 
     private AudioSource notificationSound;
@@ -56,11 +56,11 @@ public class PlayerInventory : MonoBehaviour {
         eventSystem.PlayerInteractions += EventSystem_PlayerInteractions;
         notificationSound = GetComponent<AudioSource>();
 
-        itemPositions.Add("Sword", new Vector3(-0.73f, 0.28f, -0.72f));                 // Add the dictionary key and its value to the dictionary
+        itemPositions.Add("Sword", new Vector3(-0.7f, -0.05f, -0.56f));                 // Add the dictionary key and its value to the dictionary
         itemPositions.Add("Axe", new Vector3(-0.71f, 0.5f, -0.73f));
         itemPositions.Add("Pickaxe", new Vector3(-0.71f, 0.47f, -0.82f));
-        itemPositions.Add("Campfire", new Vector3(0f, 0f, 0f));
-        itemPositions.Add("Bottle", new Vector3(0f, 0f, 0f));
+        itemPositions.Add("Campfire", new Vector3(-.46f, 0.23f, -0.5f));
+        itemPositions.Add("Bottle", new Vector3(-0.7f, 0.1f, -0.6f));
     }
 
     void FixedUpdate() {
@@ -132,11 +132,11 @@ public class PlayerInventory : MonoBehaviour {
                     break;
                 case "Campfire":
                     currentItem.transform.localPosition = itemPositions["Campfire"];                // Reset item's position
-                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);            // Rotate item
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 176f, -66.6f);       // Rotate item
                     break;
                 case "Bottle":
                     currentItem.transform.localPosition = itemPositions["Bottle"];                  // Reset item's position
-                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, 0f);            // Rotate item
+                    currentItem.transform.localRotation = Quaternion.Euler(0f, 90f, -14.5f);        // Rotate item
                     break;
                 default:
                     currentItem.transform.localPosition = Vector3.zero;                             // Reset item's position
@@ -182,7 +182,7 @@ public class PlayerInventory : MonoBehaviour {
 
     private void Drop() {
         if (holdingItem) {
-            currentItem.transform.localPosition = dropPos;                                          // Set object position and rotation to drop
+            currentItem.transform.position = dropPos.position;                                      // Set object position and rotation to drop
             currentItem.transform.rotation = Quaternion.Euler(0f, 0f, 0f);     
             try {
                 itemChunk = currentItem.GetComponent<ItemChunk>();

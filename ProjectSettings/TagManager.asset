@@ -10,6 +10,8 @@ TagManager:
   - Sword
   - Axe
   - Pickaxe
+  - Bottle
+  - Campfire
   layers:
   - Default
   - TransparentFX

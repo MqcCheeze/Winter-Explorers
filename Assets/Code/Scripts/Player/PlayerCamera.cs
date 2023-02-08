@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -17,8 +18,11 @@ public class PlayerCamera : MonoBehaviour
     private float xRotation;
     public bool canLook;                                                            // Lock/unlock ability to look around
 
+    private CinemachineVirtualCamera cinemachineCamera;
+
     void Start() {
         Cursor.lockState = CursorLockMode.Locked;                                   // Lock cursor so the mouse doesn't move when looking around
+        cinemachineCamera = GetComponent<CinemachineVirtualCamera>();
         canLook = true;                                                             // Enable/disable ability to look around
     }
 
@@ -45,12 +49,12 @@ public class PlayerCamera : MonoBehaviour
     }
 
     private void Zoom() {
-        Camera.main.fieldOfView = 30;                                               // Set field of view
+        cinemachineCamera.m_Lens.FieldOfView = 30;                                               // Set field of view
         isZoomed = true;                                                            // Set the isZoomed to true or false
     }
 
     private void Unzoom() {
-        Camera.main.fieldOfView = 60;                                               // Set field of view
+        cinemachineCamera.m_Lens.FieldOfView = 60;                                               // Set field of view
         isZoomed = false;                                                           // Set the isZoomed to true or false
     }
 }
