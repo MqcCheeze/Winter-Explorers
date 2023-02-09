@@ -5,3 +5,5 @@ Winter Explorers is a serene and peaceful adventure game where the only obstacle
 ![image](https://user-images.githubusercontent.com/87596784/215512768-109a4393-2b79-46bc-a363-39cc37229b11.png)
 
 A game you should play!
+
+Assets used in my project are either found on the Unity Asset Store or made by hand in blender. Any credits will be given in the credits menu
