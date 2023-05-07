@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EventSystem : MonoBehaviour
 {
+
     public event EventHandler<KeyPressed> PlayerInteractions;
 
     public class KeyPressed {
@@ -72,6 +73,11 @@ public class EventSystem : MonoBehaviour
                 keyPressed = "lMouse"
             });
         }
-
+        if (Input.GetMouseButtonDown(1)) {
+            Debug.Log("RMB pressed");
+            PlayerInteractions?.Invoke(this, new KeyPressed {
+                keyPressed = "rMouse"
+            });
+        }
     }
 }

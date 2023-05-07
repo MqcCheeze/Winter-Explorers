@@ -46,7 +46,7 @@ public class PlayerBreak : MonoBehaviour
         switch (currentObject.tag) {
             case "Tree":
                 try {
-                    if (playerInventory.currentItem.CompareTag("Axe")) {
+                    if (PlayerInventory.currentItem.CompareTag("Axe")) {
                         Debug.Log($"{currentObject.name} broken");
                         Destroy(currentObject);
                     }
@@ -56,7 +56,7 @@ public class PlayerBreak : MonoBehaviour
                 break;
             case "Rock":
                 try {
-                    if (playerInventory.currentItem.CompareTag("Pickaxe")) {
+                    if (PlayerInventory.currentItem.CompareTag("Pickaxe")) {
                         Debug.Log($"{currentObject.name} broken");
                         Destroy(currentObject);
                     }

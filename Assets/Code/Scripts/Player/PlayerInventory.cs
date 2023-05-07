@@ -30,7 +30,7 @@ public class PlayerInventory : MonoBehaviour {
     [SerializeField] private Color unselected;                                          // Colour of unselected inventory slot
 
     [Header("Current Item")]
-    public GameObject currentItem;                                                      // Item currently held
+    [SerializeField] public static GameObject currentItem;                              // Item currently held
     [SerializeField] private Rigidbody currentItemBody;                                 // Item body currently held
     [SerializeField] private int currentSlot;                                           // The slot the current item is in
 
@@ -180,7 +180,7 @@ public class PlayerInventory : MonoBehaviour {
         inventoryFull.gameObject.SetActive(false);
     }
 
-    private void Drop() {
+    public void Drop() {
         if (holdingItem) {
             currentItem.transform.position = dropPos.position;                                      // Set object position and rotation to drop
             currentItem.transform.rotation = Quaternion.Euler(0f, 0f, 0f);     

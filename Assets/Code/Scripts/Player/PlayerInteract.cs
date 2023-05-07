@@ -14,6 +14,7 @@ public class PlayerInteract : MonoBehaviour
 
     [SerializeField] private GameObject currentObject;                                                          // The current object
     private GameObject player;
+    private PlayerInventory playerInventory = new PlayerInventory();
 
     void Start() {
         eventSystem.PlayerInteractions += EventSystem_PlayerInteractions;
@@ -25,6 +26,7 @@ public class PlayerInteract : MonoBehaviour
         InteractRay();                                                                                          // Interact raycast
     }
 
+
     private void EventSystem_PlayerInteractions(object sender, EventSystem.KeyPressed e) {
         if (e.keyPressed == "e") {
             RaycastHit hitInfo;
@@ -32,6 +34,8 @@ public class PlayerInteract : MonoBehaviour
                 currentObject = hitInfo.collider.gameObject;                                                // Swap current item with newer item
                 Interact();                                                                                 // Pick up the object
             }
+        } else if (e.keyPressed == "rMouse") {
+            StartCoroutine(Use());
         }
     }
 
@@ -49,6 +53,16 @@ public class PlayerInteract : MonoBehaviour
             case "Chest":
                 currentObject.GetComponent<Chest>().ChestInteract(player);                                      // Get the chest script and interact with the chest on the player
                 break;
+        }
+    }
+
+
+    private IEnumerator Use() {
+        currentObject = PlayerInventory.currentItem;
+        if (currentObject.CompareTag("Bottle")) {
+            playerInventory.Drop();
+            yield return new WaitForSeconds(2f);
+            Destroy(currentObject);
         }
     }
 }
