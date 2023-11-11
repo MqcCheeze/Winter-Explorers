@@ -78,6 +78,7 @@ public class PlayerMovement : MonoBehaviour {
         if (grounded && velocity.y < 0f) {                                                  // Gravity when not in the air
             velocity.y = -2;
         }
+
     }
 
     void Update() {

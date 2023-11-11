@@ -182,8 +182,8 @@ public class PlayerInventory : MonoBehaviour {
 
     public void Drop() {
         if (holdingItem) {
-            currentItem.transform.position = dropPos.position;                                      // Set object position and rotation to drop
-            currentItem.transform.rotation = Quaternion.Euler(0f, 0f, 0f);     
+            currentItem.transform.SetPositionAndRotation(dropPos.position, Quaternion.Euler(Vector3.zero)); // Set object position and rotation to drop
+         
             try {
                 itemChunk = currentItem.GetComponent<ItemChunk>();
                 currentItem.transform.SetParent(itemChunk.parentChunk);                             // Put object back into chunk

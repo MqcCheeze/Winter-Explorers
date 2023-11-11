@@ -12,6 +12,9 @@ TagManager:
   - Pickaxe
   - Bottle
   - Campfire
+  - Enemy
+  - SpawnEnemies
+  - Points
   layers:
   - Default
   - TransparentFX
