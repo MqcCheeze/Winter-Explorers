@@ -1,12 +1,14 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Enemy : MonoBehaviour
 {
     private Transform playerTransform;
     private Vector3 velocity = new Vector3(0, -2, 0);
     private CharacterController characterController;
+    private Vector3 playerHead = new Vector3(0, 1.75f, 0);
 
     [SerializeField] private SpawnEnemies spawnEnemies;
     private float originalHealth;
@@ -32,13 +34,24 @@ public class Enemy : MonoBehaviour
         characterController.Move(velocity);
 
         this.transform.position = Vector3.MoveTowards(this.transform.position, playerTransform.position + new Vector3(0, 1, 0), speed);
-        this.transform.LookAt(playerTransform);
+        this.transform.LookAt(playerTransform.position + playerHead);
 
         if (health <= 0) {
             spawnEnemies.enemyCount--;
             Destroy(this.gameObject);
 
             score.text = Convert.ToString(Convert.ToInt32(Convert.ToInt32(score.text) + Mathf.RoundToInt(originalHealth / 5)));
+        }
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        
+        if (other.gameObject.CompareTag("Player")) {
+
+
+            PlayerHealth playerHealth = other.gameObject.GetComponent<PlayerHealth>();
+
+            playerHealth.Attacked(characterController.velocity);
         }
     }
 

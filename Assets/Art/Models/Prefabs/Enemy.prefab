@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 5206373333983547851}
   - component: {fileID: 7592400738992786816}
   - component: {fileID: 4475773208384902021}
-  - component: {fileID: 8081148179628587773}
+  - component: {fileID: 1645764600948436019}
   - component: {fileID: 8603080337771335854}
   - component: {fileID: 6286554568209859923}
+  - component: {fileID: 9011508952508819077}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Enemy
@@ -86,7 +87,7 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &8081148179628587773
+--- !u!136 &1645764600948436019
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -114,6 +115,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spawnEnemies: {fileID: 0}
   health: 10
+  score: {fileID: 0}
 --- !u!143 &6286554568209859923
 CharacterController:
   m_ObjectHideFlags: 0
@@ -132,3 +134,16 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!135 &9011508952508819077
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4603893131570010341}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.25
+  m_Center: {x: 0, y: 0.6, z: 0}

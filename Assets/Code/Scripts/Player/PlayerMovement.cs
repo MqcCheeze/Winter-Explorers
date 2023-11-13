@@ -24,12 +24,12 @@ public class PlayerMovement : MonoBehaviour {
 
     [Header("Player Speed")]                                            // Player movement
     [SerializeField] private float speed;                               // Speed
-    [SerializeField] private float sneakSpeed;                          // Sneaking speed
-    [SerializeField] private float walkSpeed;                           // Walking speed
-    [SerializeField] private float sprintSpeed;                         // Running speed
+    [SerializeField] private const float sneakSpeed = 2.5f;             // Sneaking speed
+    [SerializeField] private const int walkSpeed = 5;                   // Walking speed
+    [SerializeField] private const int sprintSpeed = 10;                // Running speed
 
-    [SerializeField] private float gravity;                             // Player's gravity
-    [SerializeField] private float jumpHeight;                          // Player's jump height
+    [SerializeField] private const int gravity = -20;                   // Player's gravity
+    [SerializeField] private const float jumpHeight = 1;                // Player's jump height
 
     [Header("Movement")]                                                // Movement
     [SerializeField] private Vector3 velocity;                          // Player velocity
@@ -38,8 +38,8 @@ public class PlayerMovement : MonoBehaviour {
     private float z;                                                    // Forwards and backwards
     [SerializeField] private CinemachineVirtualCamera cinemachineVC;    // Main camera shake when moving
     private CinemachineBasicMultiChannelPerlin cinemachineBMCP;
-    private float notMovingAmplitude = 0.5f;
-    private float movingAmplitude = 2;
+    private const float notMovingAmplitude = 0.5f;
+    private const float movingAmplitude = 2;
 
     [Header("Grounded")]                                                // Is player on the ground?
     [SerializeField] private Transform groundCheck;                     // Object to check ground with
@@ -172,5 +172,9 @@ public class PlayerMovement : MonoBehaviour {
         playerCamera.localPosition = new Vector3(0f, playerCamera.localPosition.y + 0.5f, 0f);
         groundCheck.localPosition = new Vector3(0f, groundCheck.localPosition.y - 0.5f, 0f);
         ceilingCheck.localPosition = new Vector3(0f, ceilingCheck.localPosition.y + 0.5f, 0f);
+    }
+
+    public void Knockback(Vector3 vel) {
+        transform.Translate(Vector3.back * 5 + new Vector3(0, 1, 0));
     }
 }
