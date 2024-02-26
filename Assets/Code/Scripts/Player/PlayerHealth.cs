@@ -6,24 +6,21 @@ using UnityEngine.SceneManagement;
 public class PlayerHealth : MonoBehaviour
 {
 
-    private int health = 10;
-
-    PlayerMovement playerMovement;
-
-    private void Start() {
-        playerMovement = GetComponent<PlayerMovement>();
+    private void OnCollisionEnter(Collider other) { // Execute the following code if an object collides with the player
+        if (other.gameObject.CompareTag("Enemy")) // Check if the collision is with an enemy
+        {
+            ChangeHealth(1); // Call the change health method and remove health specified within the method 
+        }
     }
 
-    public void Attacked(Vector3 velocity) {
+    private void ChangeHealth(int amount) {
+        playerHealth -= amount; // Take one point off the player's health when theyre attacked
 
-        health -= 1;
-        playerMovement.Knockback(velocity);
-
-        if (health <= 0) {
-
-            Cursor.lockState = CursorLockMode.None;
-            SceneManager.LoadScene(0);
-
+        if (playerHealth == 0) { // Check if the player has any health left
+            GameOverAnimation(); // Play the game over animation
+	        playerMovement.enabled = false; // Disable player movement script (holds PlayerMovement class)
+	        playerCamera.enabled = false; // Disable player camera script (holds PlayerCamera class)
+	        Cursor.lockState = CursorLockMode.None; // Enable the cursor so the player can click the quit button
         }
     }
 }
